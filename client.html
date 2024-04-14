@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to PDF Generator</title>
+</head>
+<body>
+    <h1>HTML to PDF Generator</h1>
+    <form id="pdfForm">
+        <label for="htmlContent">Enter HTML content:</label><br>
+        <textarea id="htmlContent" name="htmlContent" rows="10" cols="50"></textarea><br>
+        <button type="submit">Generate PDF</button>
+    </form>
+
+    <script>
+        document.getElementById('pdfForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const htmlContent = document.getElementById('htmlContent').value;
+
+            const response = await fetch('http://localhost:3000/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ htmlContent })
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                // Create a link element to download the PDF
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'generated_pdf.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                alert('Failed to generate PDF');
+            }
+        });
+    </script>
+</body>
+</html>
