@@ -1,10 +1,15 @@
 const express = require('express');
+const bodyParser = require('body-parser'); // Import body-parser middleware
 const puppeteer = require('puppeteer');
 const cors = require('cors');
 const path = require('path'); // Added path module for file paths
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Increase the payload size limit using body-parser middleware
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(cors());
 app.use(express.json());
@@ -27,42 +32,52 @@ app.post('/generate-pdf', async (req, res) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    // Set the viewport size based on the content size
-    await page.setViewport({
-        width: 1200, // Set a default width
-        height: 800, // Set a default height
-        deviceScaleFactor: 1,
-    });
+    try {
+        // Set the viewport size based on the content size
+        await page.setViewport({
+            width: 1200, // Set a default width
+            height: 800, // Set a default height
+            deviceScaleFactor: 1,
+        });
 
-    // Adjust the viewport size based on the actual content size
-    const contentSize = await page.evaluate(htmlContent => {
-        const body = document.createElement('body');
-        body.innerHTML = htmlContent;
-        document.documentElement.appendChild(body);
-        const { width, height } = body.getBoundingClientRect();
-        body.remove();
-        return { width, height };
-    }, htmlContent);
+        // Adjust the viewport size based on the actual content size
+        const contentSize = await page.evaluate(htmlContent => {
+            const body = document.createElement('body');
+            body.innerHTML = htmlContent;
+            document.documentElement.appendChild(body);
+            const { width, height } = body.getBoundingClientRect();
+            body.remove();
+            return { width, height };
+        }, htmlContent);
 
-    await page.setViewport({
-        width: contentSize.width || 1200,
-        height: contentSize.height || 800,
-        deviceScaleFactor: 1,
-    });
+        // Round up the height value to the nearest integer
+        const roundedHeight = Math.ceil(contentSize.height);
 
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+        await page.setViewport({
+            width: contentSize.width || 1200,
+            height: roundedHeight || 800,
+            deviceScaleFactor: 1,
+        });
 
-    // Set the PDF page size based on the content size
-    const pdfBuffer = await page.pdf({
-        width: `${contentSize.width || 1200}px`,
-        height: `${contentSize.height || 800}px`,
-    });
+        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
-    res.contentType("application/pdf");
-    res.send(pdfBuffer);
+        // Set the PDF page size based on the content size
+        const pdfBuffer = await page.pdf({
+            width: `${contentSize.width || 1200}px`,
+            height: `${roundedHeight || 800}px`,
+        });
 
-    await browser.close();
+        res.contentType("application/pdf");
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error("Error generating PDF:", error);
+        res.status(500).send("Error generating PDF");
+    } finally {
+        await browser.close();
+    }
 });
+
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
