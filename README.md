@@ -7,7 +7,7 @@ This is a web service built with Node.js and Express to generate PDF files from 
 1. Clone this repository to your local machine:
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/vivekx01/html-to-pdf.git
     ```
 
 2. Install dependencies using npm:
