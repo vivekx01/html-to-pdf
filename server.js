@@ -65,6 +65,7 @@ app.post('/generate-pdf', async (req, res) => {
         const pdfBuffer = await page.pdf({
             width: `${contentSize.width || 1200}px`,
             height: `${roundedHeight || 800}px`,
+            printBackground: true
         });
 
         res.contentType("application/pdf");
