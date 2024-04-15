@@ -50,3 +50,7 @@ This is a web service built with Node.js and Express to generate PDF files from 
 - The server serves static files from the 'public' directory.
 - The payload size limit for request bodies is set to 50MB.
 
+## Third-party Dependencies
+
+This project uses Puppeteer, which is licensed under the Apache 2.0 License. See the Puppeteer License at https://github.com/puppeteer/puppeteer/blob/main/LICENSE for details.
+
