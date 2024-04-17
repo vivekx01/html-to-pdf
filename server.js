@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/generate-pdf', async (req, res) => {
-    const { htmlContent } = req.body;
+    const { htmlContent, width: userWidth, height: userHeight } = req.body;
 
     if (!htmlContent) {
         return res.status(400).send("HTML content is required");
@@ -33,22 +33,21 @@ app.post('/generate-pdf', async (req, res) => {
     const page = await browser.newPage();
 
     try {
-        // Set the viewport size based on the content size
-        await page.setViewport({
-            width: 1200, // Set a default width
-            height: 800, // Set a default height
-            deviceScaleFactor: 1,
-        });
-
-        // Adjust the viewport size based on the actual content size
-        const contentSize = await page.evaluate(htmlContent => {
-            const body = document.createElement('body');
-            body.innerHTML = htmlContent;
-            document.documentElement.appendChild(body);
-            const { width, height } = body.getBoundingClientRect();
-            body.remove();
-            return { width, height };
-        }, htmlContent);
+        let contentSize;
+        if (userWidth && userHeight) {
+            // If user provides width and height, use them directly
+            contentSize = { width: parseInt(userWidth), height: parseInt(userHeight) };
+        } else {
+            // Calculate content size if user doesn't provide width and height
+            contentSize = await page.evaluate(htmlContent => {
+                const body = document.createElement('body');
+                body.innerHTML = htmlContent;
+                document.documentElement.appendChild(body);
+                const { width, height } = body.getBoundingClientRect();
+                body.remove();
+                return { width, height };
+            }, htmlContent);
+        }
 
         // Round up the height value to the nearest integer
         const roundedHeight = Math.ceil(contentSize.height);
@@ -77,8 +76,6 @@ app.post('/generate-pdf', async (req, res) => {
         await browser.close();
     }
 });
-
-
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
