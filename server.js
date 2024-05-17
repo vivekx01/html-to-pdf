@@ -33,13 +33,6 @@ app.post('/generate-pdf', async (req, res) => {
     const page = await browser.newPage();
 
     try {
-        // Set the viewport size based on the content size
-        await page.setViewport({
-            width: 1200, // Set a default width
-            height: 800, // Set a default height
-            deviceScaleFactor: 1,
-        });
-
         // Adjust the viewport size based on the actual content size
         const contentSize = await page.evaluate(htmlContent => {
             const body = document.createElement('body');

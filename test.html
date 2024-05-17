@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorful Dummy A4 Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 210mm;
+            height: 297mm;
+            background: linear-gradient(45deg, #ff6f61, #6b5b95, #88b04b, #f7cac9, #92a8d1);
+            background-size: 1000% 1000%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            padding: 2cm;
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        main {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        section {
+            margin: 2rem 0;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        section p {
+            font-size: 1.25rem;
+            line-height: 1.6;
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        @media print {
+            body, .page {
+                background: none;
+                width: 100%;
+                height: auto;
+            }
+            .page {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header>
+            <h1>Welcome to the Colorful Dummy Page</h1>
+        </header>
+        <main>
+            <section>
+                <h2>About This Page</h2>
+                <p>This is a colorful dummy HTML page designed to fit an A4 size, showcasing a gradient background animation and simple, responsive design elements.</p>
+            </section>
+            <section>
+                <h2>Features</h2>
+                <p>Enjoy the vibrant color transitions, clean layout, and responsive design. This page serves as a basic template that you can expand upon and customize.</p>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2024 Colorful Dummy Page</p>
+        </footer>
+    </div>
+</body>
+</html>
